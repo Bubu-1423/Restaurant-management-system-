@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<title>Restaurant Management System</title>
+</head>
+<body>
+<h2 class="sr-only">Restaurant Management System — interactive prototype with menu, orders, reservations, and admin dashboard</h2>
+
+<nav>
+  <div class="nav-logo">food<span> hub</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('menu')">Menu</button>
+    <button class="nav-tab" onclick="showPage('orders')">Orders</button>
+    <button class="nav-tab" onclick="showPage('reserve')">Reserve</button>
+    <button class="nav-tab" onclick="showPage('admin')">Admin</button>
+  </div>
+  <div class="nav-right">
+    <button class="cart-btn" onclick="toggleCart()">
+      🛒 Cart <div class="cart-badge" id="cart-count">0</div>
+    </button>
+  </div>
+</nav>
+
+<!-- MENU PAGE -->
+<div id="page-menu" class="page active">
+  <div class="hero">
+    <div class="hero-tag">🔥 Now serving</div>
+    <h1>Fine dining,<br><span>delivered to you.</span></h1>
+    <p>Handcrafted dishes from our chefs. Order online, pick up or get delivered.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="document.querySelector('.search-bar').scrollIntoView({behavior:'smooth'})">Order Now</button>
+      <button class="btn-sec" onclick="showPage('reserve')">Book a Table</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">0</div><div class="stat-label">Menu Items</div></div>
+      <div class="stat"><div class="stat-num">0★</div><div class="stat-label">Rating</div></div>
+      <div class="stat"><div class="stat-num">0min</div><div class="stat-label">Avg Delivery</div></div>
+    </div>
+  </div>
+
+  <div class="search-bar">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" type="text" placeholder="Search dishes..." id="search-input" oninput="filterMenu()">
+    </div>
+    <div class="filter-chips">
+      <button class="chip active" onclick="setFilter('all',this)">All</button>
+      <button class="chip" onclick="setFilter('veg',this)">🌿 Veg</button>
+      <button class="chip" onclick="setFilter('nonveg',this)">🍖 Non-veg</button>
+      <button class="chip" onclick="setFilter('drinks',this)">🥤 Drinks</button>
+    </div>
+  </div>
+
+  <div class="menu-content" id="menu-content"></div>
+</div>
+
+<!-- ORDERS PAGE -->
+<div id="page-orders" class="page">
+  <div class="orders-wrap">
+    <div class="section-title">My Orders</div>
+    <div id="orders-list"></div>
+  </div>
+</div>
+
+<!-- RESERVATION PAGE -->
+<div id="page-reserve" class="page">
+  <div class="reservation-wrap">
+    <div class="section-title">Book a Table</div>
+    <div class="res-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <input class="form-input" type="date" id="res-date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Time</label>
+          <select class="form-input" id="res-time">
+            <option>12:00 PM</option><option>12:30 PM</option><option>1:00 PM</option>
+            <option>7:00 PM</option><option>7:30 PM</option><option>8:00 PM</option><option>8:30 PM</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Name</label>
+          <input class="form-input" type="text" placeholder="Your name" id="res-name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Guests</label>
+          <select class="form-input" id="res-guests">
+            <option>1</option><option>2</option><option selected>3-4</option><option>5-6</option><option>7+</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-label" style="margin-bottom:8px">Select Table</div>
+      <div class="table-grid" id="table-grid"></div>
+      <button class="btn-primary" style="width:100%" onclick="makeReservation()">Confirm Reservation</button>
+    </div>
+    <div class="section-title">Upcoming Reservations</div>
+    <div class="res-list" id="res-list"></div>
+  </div>
+</div>
+
+<!-- ADMIN PAGE -->
+<div id="page-admin" class="page">
+  <div class="admin-wrap">
+    <div class="section-title">Dashboard</div>
+    <div class="metrics-grid">
+      <div class="metric-card"><div class="metric-icon">📦</div><div class="metric-val">0</div><div class="metric-label">Orders today</div><div class="metric-change up">↑ 0% vs yesterday</div></div>
+      <div class="metric-card"><div class="metric-icon">💰</div><div class="metric-val">₹0</div><div class="metric-label">Revenue today</div><div class="metric-change up">↑ 0% vs yesterday</div></div>
+      <div class="metric-card"><div class="metric-icon">👥</div><div class="metric-val">0</div><div class="metric-label">Customers</div><div class="metric-change up">↑ 0% this week</div></div>
+      <div class="metric-card"><div class="metric-icon">⭐</div><div class="metric-val">0</div><div class="metric-label">Avg rating</div><div class="metric-change down">↓ 0 this week</div></div>
+    </div>
+    <div class="dashboard-grid">
+      <div class="dash-card">
+        <div class="dash-card-title">Popular Items</div>
+        <div class="bar-chart" id="popular-chart"></div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-title">Live Orders</div>
+        <div class="order-list" id="admin-orders"></div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-title">Revenue by Category</div>
+        <div class="donut-wrap"><canvas id="donut" width="180" height="180"></canvas></div>
+        <div id="donut-legend" style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:8px"></div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-title">Orders by Hour</div>
+        <div id="hourly-chart" style="display:flex;align-items:flex-end;gap:3px;height:100px;padding-top:8px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CART PANEL -->
+<div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+<div class="cart-panel" id="cart-panel">
+  <div class="cart-header">
+    <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:600">Your Order</div>
+    <button class="cart-close" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cart-items"></div>
+  <div class="cart-footer" id="cart-footer"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>

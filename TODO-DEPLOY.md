@@ -1,0 +1,4 @@
+- [ ] Fix any deployment blockers (env vars, static paths)
+- [x] Add Render config (render.yaml) for auto-deploy (web service)
+- [ ] Prepare README deploy steps for Render
+- [ ] Update script.js to not rely on localhost:3000 (use same host in prod)

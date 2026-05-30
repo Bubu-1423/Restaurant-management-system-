@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: restaurant-management-system
+    env: node
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: npm install
+    startCommand: npm start

@@ -1,0 +1,5 @@
+- [x] Fix server static asset serving so script.js/style.css load correctly
+- [x] Fix cart: remove hardcoded item price/name fallback in script.js
+- [x] Fix placeOrder: compute total_amount from cart subtotal (+ GST if desired)
+- [ ] Improve orders display (optional): show all items instead of only first item
+- [x] Run npm start and verify website flows (menu -> cart -> place order -> orders)
